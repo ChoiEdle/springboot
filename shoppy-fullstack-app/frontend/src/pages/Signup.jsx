@@ -1,8 +1,11 @@
 import React, { useState, useRef, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { validateFormCheck } from '../utils/validate.js';
 import { initForm } from '../utils/init.js';
+import { axiosPost } from '../utils/dataFetch.js'
 
-export function Signup() { 
+export function Signup() {
+    const navigate = useNavigate();
     const initArray = ["id", "pwd", "cpwd", "name", "phone", "emailName", "emailDomain"];
 
     const refs = useMemo(() => {    //Hooks 비동기식 처리 진행
@@ -29,17 +32,35 @@ export function Signup() {
         setForm(initForm(initArray));
     }
     
-    const handleSubmit = (e) => {
+    const handleSubmit = async(e) => {
         e.preventDefault();
         const param = {
             refs: refs,
             setErrors: setErrors
         }
         if(validateFormCheck(param)){
-            console.log("submit --> ", form);
-            
+            const url = "http://localhost:8080/member/signup";
+            const formData = {...form, "email":form.emailName.concat('@', form.emailDomain)}
+            console.log("formData --> ", formData);
+            const result = await axiosPost(url, formData);
+            console.log(result);
+            if(result) {
+                alert("회원가입에 성공하셨습니다.");
+                navigate("/login");
+            } else {
+                alert("회원가입에 실패하셨습니다.");
+            }
         }
         // console.log(form);
+        }
+
+    /** 아이디 중복체크 */
+    const handleIdCheck = async() => {
+        console.log(form.id);
+        const url = "http://localhost:8080/member/idcheck";
+        const data = {"id": form.id};
+        const result = await axiosPost(url, data);
+        alert(result);
     }
 
     
@@ -60,8 +81,7 @@ export function Signup() {
                                     onChange={handleChangeForm}
                                     value={form.id}
                                     ref={refs.idRef} />
-                            <button type="button" 
-                                  > 중복확인</button>
+                            <button type="button" onClick={handleIdCheck}> 중복확인</button>
                             <input type="hidden" id="idCheckResult" value="default" />
                         </div>
                     </li>
