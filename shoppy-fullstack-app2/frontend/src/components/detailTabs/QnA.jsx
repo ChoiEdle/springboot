@@ -1,0 +1,61 @@
+import React, { useEffect, useState } from 'react';
+import { axiosData } from '../../utils/dataFetch.js';
+import { CiLock } from "react-icons/ci";
+
+
+export function QnA() {
+    const [qnaData, setQnaData] = useState([]);
+    const [openQid, setOpenQid] = useState(null);
+    const [isOpen, setIsOpen] = useState(false);
+
+    useEffect(()=>{
+        const fetch = async() => {
+            const jsonData = await axiosData("/data/productQnA.json");
+            setQnaData(jsonData);
+        }
+        fetch();
+    }, []);
+
+    const handleToggle = (qid) => {
+        setOpenQid(prev => prev===null ? qid : null);
+    };
+    const handleToggleButton = () => {
+        setIsOpen(!isOpen);
+    }
+
+    return (
+        <div>
+            <div style={{paddingTop:"20px"}}>
+                {isOpen && <button type='button' style={{backgroundColor:"green"}} onClick={handleToggleButton}>상품 문의</button>}
+                {!isOpen && <button type='button' style={{backgroundColor:"coral"}} onClick={handleToggleButton}>상품 문의</button>}
+                {!isOpen && <sapn>버튼이 코랄입니다.</sapn>}
+            </div>
+            <table className='review-list-content'>
+                <tbody>
+                    {qnaData && qnaData.map(item => 
+                        <tr style={{paddingTop:"10px"}}>
+                            <td style={{width:"10%"}}>
+                                {item.isComplete && item.isComplete ? <span>답변완료</span> : <span>접수완료</span>}
+                            </td>
+                            <td style={{width:"60%"}}>
+                                <span style={{cursor:"pointer"}} onClick={()=>{handleToggle(item.qid)}}>{item.title && item.title}</span>
+                                {item.isLock && item.isLock ? <CiLock /> : ""}
+                                {openQid === item.qid && <span>{item.content}</span>}
+                            </td>
+                            <td style={{width:"15%"}}>
+                                {item.id && item.id}
+                            </td>
+                            <td>
+                                {item.cdate && item.cdate}
+                            </td>
+                        </tr>
+                    )}
+                    <tr>
+                        <td colSpan={4}>{"<< "} 1 2 3 4 5 {" >>"}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    );
+}
+

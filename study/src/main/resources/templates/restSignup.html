@@ -11,7 +11,7 @@
             const address = document.getElementById("address").value;
             const formData = {"id":id, "pass":pass, "name":name, "address":address};
 
-            const response = await fetch("/restSignup", {
+            const response = await fetch("/member/restSignup", {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify(formData)
