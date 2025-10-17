@@ -1,10 +1,13 @@
 import React, { useState, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from "react-redux";
 import { validateFormCheck } from '../utils/validate.js';
 import { initForm } from '../utils/init.js';
 import { axiosPost } from '../utils/dataFetch.js'
+import { getSignup, getIdCheck } from '../feature/auth/authAPI.js'
 
 export function Signup() {
+    const dispatch = useDispatch();
     const navigate = useNavigate();
     const initArray = ["id", "pwd", "cpwd", "name", "phone", "emailName", "emailDomain"];
 
@@ -38,28 +41,22 @@ export function Signup() {
             refs: refs,
             setErrors: setErrors
         }
-        if(validateFormCheck(param)){
-            const url = "http://localhost:8080/member/signup";
-            const formData = {...form, "email":form.emailName.concat('@', form.emailDomain)}
-            console.log("formData --> ", formData);
-            const result = await axiosPost(url, formData);
-            console.log(result);
-            if(result) {
-                alert("회원가입에 성공하셨습니다.");
-                navigate("/login");
-            } else {
-                alert("회원가입에 실패하셨습니다.");
-            }
+        const formData = {...form, "email":form.emailName.concat('@', form.emailDomain)}
+
+        const result = await dispatch(getSignup(formData, param));
+        if(result) {
+            alert("회원가입에 성공하셨습니다.");
+            navigate("/login");
+        } else {
+            alert("회원가입에 실패하셨습니다.");
         }
-        // console.log(form);
-        }
+//         console.log(result);
+    }
 
     /** 아이디 중복체크 */
     const handleIdCheck = async() => {
         console.log(form.id);
-        const url = "http://localhost:8080/member/idcheck";
-        const data = {"id": form.id};
-        const result = await axiosPost(url, data);
+        const result = await dispatch(getIdCheck(form.id));
         alert(result);
     }
 
