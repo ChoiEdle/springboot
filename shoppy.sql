@@ -21,4 +21,10 @@ create table member(
 show tables;
 desc member;
 select * from member;
+select count(id) from member where id='test' and pwd='1234';
 
+alter table member modify column pwd varchar(100) not null;
+SET SQL_SAFE_UPDATES = 0;
+delete from member where id = 'testtest';
+
+select pwd from member where id = "test";

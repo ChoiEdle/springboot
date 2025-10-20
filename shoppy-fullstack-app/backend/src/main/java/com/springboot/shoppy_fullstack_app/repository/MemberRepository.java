@@ -5,5 +5,5 @@ import com.springboot.shoppy_fullstack_app.dto.Member;
 public interface MemberRepository {
     int save (Member member);
     Long findId (String id);
-    Long checkId (Member member);
+    String login (String id);
 }
