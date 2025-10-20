@@ -5,8 +5,10 @@ import com.springboot.shoppy_fullstack_app.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional  //DB가 auto-commit 모드면 생략가능
 public class MemberServiceImpl implements MemberService{
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
@@ -38,10 +40,14 @@ public class MemberServiceImpl implements MemberService{
 
     @Override
     public boolean login (Member member) {
-        String encodePwd = memberRepository.login(member.getId());
-        boolean result = passwordEncoder.matches(member.getPwd(), encodePwd);
-//        System.out.println(encodePwd);
-//        if(rows == 1) result = true;
-        return result;
+        if(idCheck(member.getId())){
+            String encodePwd = memberRepository.login(member.getId());
+            boolean result = passwordEncoder.matches(member.getPwd(), encodePwd);
+    //        System.out.println(encodePwd);
+    //        if(rows == 1) result = true;
+            return result;
+        } else {
+            return false;
+        }
     }
 }

@@ -3,7 +3,8 @@ import { createSlice } from '@reduxjs/toolkit'
 const initialState = {
     productList: [],    //출력용 - 2차원 배열
     products: [],        //원본 - 1차원 배열
-    product: {}
+    product: {},
+    imgList: []
 }
 
 export const productSlice = createSlice({
@@ -17,10 +18,12 @@ export const productSlice = createSlice({
         },
         filterProduct(state, action) {
             //const pid = action.payload.pid;
-            const {pid} = action.payload;
+            const {product} = action.payload;
+            state.product = product;
+            state.imgList = JSON.parse(product.imgList);
             // const [fproduct] = state.productList.flat().filter((item) => item.pid === pid);      //[]준건 배열을 구조 분해 할당 한 것
             // state.product = fproduct;
-            state.product = state.products.find((item) => item.pid === pid);
+            // state.product = state.products.find((item) => item.pid === pid);
         }
     },
 })
