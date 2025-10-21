@@ -137,7 +137,7 @@ where m.id = pq.id and p.pid = pq.pid and p.pid = 7 and m.id = 'hong';
 
 select qid, title, content, is_complete isComplete, is_lock isLock, id, pid, cdate from product_qna where pid=1;
 
-
+select qid, title, content, is_complete isComplete, is_lock isLock, id, pid, cdate from product_qna where pid=1;
 
 
 
