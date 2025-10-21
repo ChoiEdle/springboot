@@ -2,6 +2,18 @@ import React from 'react';
 import { createProduct, filterProduct } from './productSlice.js';
 import { axiosData, groupByRows, axiosGet, axiosPost } from '../../utils/dataFetch.js';
 
+/**
+    상품 상세 정보
+*/
+export const getDetailinfo = async(pid) => {
+    const url = "/product/detailinfo";
+    const info = await axiosPost(url, {"pid": pid});
+    const list = JSON.parse(info.list);
+//    console.log(detailinfo);
+
+    return {...info, list: list};
+}
+
 export const getProductList = (number) => async(dispatch) => {
 //    const jsonData = await axiosData("/data/products.json");
     const url = "/product/all";
