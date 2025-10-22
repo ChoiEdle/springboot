@@ -2,6 +2,13 @@ import React from 'react';
 import { createProduct, filterProduct } from './productSlice.js';
 import { axiosData, groupByRows, axiosGet, axiosPost } from '../../utils/dataFetch.js';
 
+export const getReturn = async() => {
+    const url = "/product/return";
+    const rt = await axiosGet(url);
+    const list = JSON.parse(rt.list);
+    return {...rt, list: list};
+}
+
 /**
     상품 QnA
 */

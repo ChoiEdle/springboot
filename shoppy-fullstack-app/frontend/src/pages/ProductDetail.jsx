@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { PiGiftThin } from 'react-icons/pi';
 import { ImageList } from '../components/commons/ImageList.jsx';
 import { StarRating } from '../components/commons/StarRating.jsx';
@@ -16,7 +16,8 @@ export function ProductDetail() {
     const product = useSelector((state)=>state.product.product);
     // const imgList = product.imgList;     //이것도 됨
     const imgList = useSelector((state)=>state.product.imgList);
-
+    const isLogin = useSelector((state)=>state.auth.isLogin);
+    const navigate = useNavigate();
     const {pid} = useParams();
     const [size, setSize] = useState('XS');
     const tabLabels = ['DETAIL','REVIEW','Q&A','RETURN & DELIVERY'];
@@ -52,7 +53,7 @@ export function ProductDetail() {
                     </li>
                     <li className='flex'>
                         <button type='button' className='product-detail-button order'>바로 구매</button>
-                        <button type='button' className='product-detail-button cart' onClick={()=>{dispatch(addCart(product.pid, size))}}>쇼핑백 담기</button>
+                        <button type='button' className='product-detail-button cart' onClick={()=>{isLogin ? dispatch(addCart(product.pid, size)) : navigate("/login")}}>쇼핑백 담기</button>
                         <button type='button' className='gift'>
                             <PiGiftThin />
                             <div className='gift-span'>선물하기</div>

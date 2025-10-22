@@ -139,6 +139,57 @@ select qid, title, content, is_complete isComplete, is_lock isLock, id, pid, cda
 
 select qid, title, content, is_complete isComplete, is_lock isLock, id, pid, cdate from product_qna where pid=1;
 
+/*****************************************************************************
+	상품 Return/Delivery 테이블 생성 : product_return
+******************************************************************************/
+show tables;
+create table product_return (
+	rid		int				auto_increment		primary key,
+    title	varchar(100)	not null,
+    description	varchar(200),
+    list	json
+);
+
+desc product_return;
+
+-- json_table을 이용하여 데이터 추가
+insert into product_return(title, description, list)
+select jt.title, jt.description, jt.list
+from json_table(
+	cast(load_file('C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/productReturn.json') AS CHAR CHARACTER SET utf8mb4),
+    '$[*]' COLUMNS (
+			 title			varchar(100)	PATH	'$.title',
+             description	varchar(200)	PATH	'$.description',
+             list			json			PATH	'$.list'
+		   )
+) as jt;
+
+select * from product_return;
+
+select rid, title, description, list from product_return;
+
+/*****************************************************************************
+	장바구니 테이블 생성 : cart
+    cid, pid, id, size, qty, cdate
+******************************************************************************/
+create table cart(
+	cid		int			auto_increment		primary key,
+    size	char(2)		not null,
+    qty		int			not null,
+    pid		int			not null,
+    id		varchar(50)	not null,
+    cdate	datetime	not null,
+    constraint	fk_cart_pid	foreign key(pid) references product(pid) on delete cascade on update cascade,
+    constraint	fk_cart_id	foreign key(id) references member(id) on delete cascade on update cascade
+);
+
+desc cart;
+
+
+
+insert into cart(size, qty, pid, id, cdate) values(?, ?, ?, ?, now());
+select * from cart;
+
 
 
 
