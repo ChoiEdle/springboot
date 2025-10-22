@@ -10,4 +10,6 @@ public class CartItem {
     private int pid;
     private String id;
     private String cdate;
+    private int checkQty;
+    private String type;
 }

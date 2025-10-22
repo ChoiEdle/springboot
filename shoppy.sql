@@ -190,6 +190,21 @@ desc cart;
 insert into cart(size, qty, pid, id, cdate) values(?, ?, ?, ?, now());
 select * from cart;
 
+set sql_safe_update = 0;
+
+delete from cart where cid = 1;
+
+-- pid:1, size:xs 인 상품 조회
+
+select count(*) as checkQty, cid from cart where pid=3 and size = "xs" group by cid;
+
+select cid, sum(pid=4 and size='xs') as checkQty from cart group by cid order by checkQty desc limit 1;
+
+select * from cart;
+
+update cart set qty = qty + 1 where cid = 2;
+
+select cid, sum(pid=2 and size="xs" and id="gogogo") as checkQty from cart group by cid order by checkQty desc limit 1;
 
 
 

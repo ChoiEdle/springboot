@@ -18,4 +18,14 @@ public class CartServiceImpl implements CartService{
     public int add(CartItem cartItem) {
         return cartRepository.add(cartItem);
     }
+
+    @Override
+    public CartItem checkQty(CartItem cartItem) {
+        return cartRepository.checkQty(cartItem);
+    }
+
+    @Override
+    public int updateQty(CartItem cartItem) {
+        return cartRepository.updateQty(cartItem);
+    }
 }
