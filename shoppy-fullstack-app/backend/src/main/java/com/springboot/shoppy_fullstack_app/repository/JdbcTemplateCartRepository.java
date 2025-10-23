@@ -1,11 +1,13 @@
 package com.springboot.shoppy_fullstack_app.repository;
 
 import com.springboot.shoppy_fullstack_app.dto.CartItem;
+import com.springboot.shoppy_fullstack_app.dto.CartListResponse;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.util.List;
 
 @Repository
 public class JdbcTemplateCartRepository implements CartRepository{
@@ -26,7 +28,7 @@ public class JdbcTemplateCartRepository implements CartRepository{
 
     @Override
     public CartItem checkQty(CartItem cartItem) {
-        String sql = "select cid, sum(pid=? and size=? and id=?) as checkQty from cart group by cid order by checkQty desc limit 1";
+        String sql = "select ifnull(max(cid), 0) as cid, count(*) as checkQty from cart where pid = ? and size = ? and id = ?";
         Object[] params = {cartItem.getPid(), cartItem.getSize(), cartItem.getId()};
         return jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(CartItem.class), params);
     }
@@ -40,5 +42,19 @@ public class JdbcTemplateCartRepository implements CartRepository{
             sql = "update cart set qty = qty - 1 where cid = ?";
         }
         return jdbcTemplate.update(sql, cartItem.getCid());
+    }
+
+    @Override
+    public CartItem getCount(CartItem cartItem) {
+        String sql = "select ifnull(sum(qty), 0) as sumQty from cart where id = ?";
+        Object[] params = {cartItem.getId()};
+        return jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(CartItem.class), params);
+    }
+
+    @Override
+    public List<CartListResponse> findList(CartItem cartItem) {
+        String sql = "select m.id, p.pid, p.name, p.image, p.price, c.size, c.qty, c.cid from member m, product p, cart c where m.id = c.id and p.pid = c.pid and c.id = ?";
+        Object[] params = {cartItem.getId()};
+        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(CartListResponse.class), params);
     }
 }

@@ -152,6 +152,8 @@ create table product_return (
 
 desc product_return;
 
+select * from product_return;
+
 -- json_table을 이용하여 데이터 추가
 insert into product_return(title, description, list)
 select jt.title, jt.description, jt.list
@@ -205,6 +207,23 @@ select * from cart;
 update cart set qty = qty + 1 where cid = 2;
 
 select cid, sum(pid=2 and size="xs" and id="gogogo") as checkQty from cart group by cid order by checkQty desc limit 1;
+
+SELECT ifnull(MAX(cid), 0) AS cid, COUNT(*) AS checkQty FROM cart WHERE pid = 1 AND size = 'xs' AND id = 'test';
+
+select ifnull(max(cid), 0) as cid, count(*) as checkQty from cart where pid = 1 and size = 'xs' and id = 'test';
+
+-- 장바구니 상품갯수 조회
+select count(qty) from cart where id = 'test';
+select ifnull(sum(qty), 0) as sumQty from cart where id = 'test1';
+select * from member;
+select * from cart;
+select * from product;
+
+-- 장바구니 리스트 조회 :
+-- 어떤 회원이 어떤 상품을 몇개 넣었는가??
+
+select m.id, p.pid, p.name, p.image, p.price, c.size, c.qty, c.cid from member m, product p, cart c where m.id = c.id and p.pid = c.pid and c.id = "test";
+
 
 
 
