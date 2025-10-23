@@ -224,6 +224,21 @@ select * from product;
 
 select m.id, p.pid, p.name, p.image, p.price, c.size, c.qty, c.cid from member m, product p, cart c where m.id = c.id and p.pid = c.pid and c.id = "test";
 
+select m.id, p.pid, p.name, p.image, p.price, c.size, c.qty, c.cid, (select sum(c.qty * p.price) from cart c inner join product p on c.pid = p.pid where c.id = "test") as total_price
+from member m, product p, cart c where m.id = c.id and p.pid = c.pid and c.id = "test";
+
+update cart set qty = qty + 1 where cid = 15;
+
+delete from cart where cid = "9";
+
+select ifnull(max(cid), 0) as cid, count(*) as checkQty from cart where pid = "2" and size = "xs" and id = "test";
+
+select sum(c.qty * p.price) as total_price from cart c inner join product p on c.pid = p.pid where c.id = "test";
+
+
+
+
+
 
 
 

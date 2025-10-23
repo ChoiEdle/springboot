@@ -53,8 +53,18 @@ public class JdbcTemplateCartRepository implements CartRepository{
 
     @Override
     public List<CartListResponse> findList(CartItem cartItem) {
-        String sql = "select m.id, p.pid, p.name, p.image, p.price, c.size, c.qty, c.cid from member m, product p, cart c where m.id = c.id and p.pid = c.pid and c.id = ?";
-        Object[] params = {cartItem.getId()};
+        String sql = """
+                select m.id, p.pid, p.name, p.image, p.price, c.size, c.qty, c.cid, (select sum(c.qty * p.price) from cart c inner join product p on c.pid = p.pid where c.id = ?) as totalPrice
+                from member m, product p, cart c where m.id = c.id and p.pid = c.pid and c.id = ?
+                """;
+        Object[] params = {cartItem.getId(), cartItem.getId()};
         return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(CartListResponse.class), params);
+    }
+
+    @Override
+    public int deleteItem(CartItem cartItem) {
+        String sql = "delete from cart where cid = ?";
+        Object[] params = {cartItem.getCid()};
+        return jdbcTemplate.update(sql, params);
     }
 }

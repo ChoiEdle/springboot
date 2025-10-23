@@ -2,14 +2,15 @@ import React from 'react';
 import { addCartItem, updateCartCount, showCartItem, updateTotalPrice, updateCartItem, removeCartItem } from './cartSlice.js';
 import { axiosData, axiosPost } from '../../utils/dataFetch.js';
 
-//장바구니 카운트
-export const getCartCount = async(id) => {
+//회원별 장바구니 카운트
+export const getCartCount = (id) => async(dispatch) => {
     const url = "/cart/count";
     const data = {"id":id};
     const jsonData = await axiosPost(url, data);
+    dispatch(updateCartCount({"count": jsonData.sumQty}));
+
     return jsonData.sumQty;
 }
-
 
 export const showCart = () => async(dispatch) => {
 //    const jsonData = await axiosData("/data/products.json");
@@ -20,13 +21,17 @@ export const showCart = () => async(dispatch) => {
 //    console.log(jsonData);
 
     dispatch(showCartItem({"items":jsonData}));
-    dispatch(updateTotalPrice());
+    dispatch(updateTotalPrice({"totalPrice" : jsonData[0].totalPrice}));
 }
 
-export const updateCart = async(cid, type) => {
+export const updateCart = (cid, type) => async(dispatch) => {
     const url = "/cart/updateQty";
     const data = {"cid":cid, "type":type};
     const rows = await axiosPost(url, data);
+    const {userId} = JSON.parse(localStorage.getItem("loginInfo"));
+    dispatch(getCartCount(userId));
+    dispatch(showCart());
+    return rows;
 //    dispatch(updateCartItem({"cid":cid, "type":type}));     //수량변경
 //    dispatch(updateTotalPrice());
 //    dispatch(updateCartCount());
@@ -48,21 +53,29 @@ export const addCart = (pid, size) => async(dispatch) => {
         const item = {"pid":pid, "size":size, "qty":1, "id":userId};
         const rows = await axiosPost(url, item);
         alert("새로운 상품이 추가되었습니다.");
-        dispatch(updateCartCount({"count": 1, "type": true}));
-        return rows;
+//        dispatch(updateCartCount({"count": 1, "type": true}));
+//        return rows;
     } else {
         //qty update
-        const rows = await updateCart(checkResult.cid, "+");
-        dispatch(updateCartCount({"count": 1, "type": true}));
+        dispatch(updateCart(checkResult.cid, "+"));
+//        dispatch(updateCartCount({"count": 1, "type": true}));
         alert("상품이 추가되었습니다.");
-
     }
+    dispatch(getCartCount(userId));
 
+    return 1;
 //    dispatch(addCartItem({"cartItem":{"pid":pid, "size":size, "qty":1}}));
 }
 
 export const removeCart = (cid) => async(dispatch) => {
-    dispatch(removeCartItem({"cid":cid}));
-    dispatch(updateTotalPrice());
-    dispatch(updateCartCount());
+    const url = "/cart/deleteItem";
+    const data = {"cid": cid};
+    const rows = await axiosPost(url, data);
+    const {userId} = JSON.parse(localStorage.getItem("loginInfo"));
+    dispatch(getCartCount(userId));
+    dispatch(showCart());
+
+//    dispatch(removeCartItem({"cid":cid}));
+//    dispatch(updateTotalPrice());
+//    dispatch(updateCartCount());
 }
