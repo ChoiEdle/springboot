@@ -238,6 +238,46 @@ select sum(c.qty * p.price) as total_price from cart c inner join product p on c
 
 
 
+/*********************************************************************
+	view_cartlist 생성
+**********************************************************************/
+create view view_cartlist
+as
+select  m.id,
+		m.name as mname,
+		m.phone,
+		m.email,
+		p.pid,
+		p.name,
+		p.info,
+		p.image,
+	   p.price,
+	   c.size,
+	   c.qty,
+	   c.cid,
+       t.totalPrice
+   from member m, product p, cart c,
+          (select c.id, sum(c.qty * p.price) as totalPrice
+			from cart c
+			inner join product p on c.pid = p.pid
+			group by c.id) as t
+   where m.id = c.id
+	and p.pid = c.pid
+    and c.id = t.id
+; 
+
+/*********************************************************************
+	고객센터 테이블 생성 : support
+**********************************************************************/
+create table support(
+	sid			int		auto_increment	primary key,    
+    title		varchar(100)	not null,
+    content		varchar(200),
+    stype		varchar(30)	 not null,
+    hits		int,
+    rdate		datetime
+);
+
 
 
 
