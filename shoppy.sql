@@ -336,6 +336,17 @@ show tables;
 
 desc orders;
 
+insert into orders(order_code, member_id, shipping_fee, discount_amount, total_amount, receiver_name, receiver_phone, zipcode, address1, address2, memo, odate)
+values();
 
+select * from orders;
+select * from order_detail;
 
-
+-- insert into order_detail(order_code, pid, pname, size, qty, pid_total_price, discount)
+select 'abc', pid, name as pname, size, qty, totalPrice as pid_total_price, 0       
+from view_cartList where cid in (17,18,19);
+            
+set sql_safe_updates = 0;
+delete from orders;
+            
+            
