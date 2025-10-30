@@ -20,7 +20,7 @@ export const getSignup = (formData, param) => async(dispatch) => {
     if(validateFormCheck(param)){
         const url = "/member/signup";
         result = await axiosPost(url, formData);
-//        console.log(result, formData);
+//        console.log(result);
 
     }
     return result;
@@ -33,9 +33,10 @@ export const getLogin = (formData, param) => async(dispatch) => {
             SpringBoot - @RestController, @PostMapping("/member/login")
             axios api
         */
-        const url = "/member/login";
+        const url = "/member/login";    //프록시를 통해 전송시 상대경로입력!!
         const result = await axiosPost(url, formData);
-        if(result) {
+        console.log(result);
+        if(result.login) {
             //로그인 성공
             dispatch(login({"userId":formData.id}));
             //장바구니 카운트 함수 호출
@@ -49,8 +50,13 @@ export const getLogin = (formData, param) => async(dispatch) => {
     // return false;
 }
 
-export const getLogout = () => (dispatch) => {
-    dispatch(logout());
-    dispatch(resetCartCount());
+export const getLogout = () => async(dispatch) => {
+    const url = "/member/logout";
+    const result = await axiosPost(url, {});
+    console.log(result);
+    if(result) {
+        dispatch(logout());
+        dispatch(resetCartCount());
+    }
     return true;
 }
