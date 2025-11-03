@@ -31,7 +31,7 @@ public class MemberController {
         String sid = (String)session.getAttribute("sid");
         if(ssid != null && sid != null){
             session.invalidate();   //세션 삭제 - 스프링의 세션 테이블에서 삭제됨
-            
+
             var cookie = new Cookie("JSESSIONID", null);
             cookie.setPath("/");                //기존과 동일
             cookie.setMaxAge(0);                //즉시 만료
@@ -39,6 +39,14 @@ public class MemberController {
 //            cookie.setSecure(true);           //HTTPS에서만, 로컬 http면 주석
 //            cookie.setDomain("localhost");    //기존 쿠키가 domain=localhost였다면 지정
             response.addCookie(cookie);
+
+            var xsrf = new Cookie("XSRF-TOKEN", null);
+            xsrf.setPath("/");                //기존과 동일
+            xsrf.setMaxAge(0);                //즉시 만료
+            xsrf.setHttpOnly(false);           //개발중에도 HttpOnly 유지 권장
+//            xsrf.setSecure(true);           //HTTPS에서만, 로컬 http면 주석
+//            xsrf.setDomain("localhost");    //기존 쿠키가 domain=localhost였다면 지정
+            response.addCookie(xsrf);
             
             return ResponseEntity.ok(true);
         } else {

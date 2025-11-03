@@ -22,10 +22,9 @@ import { createCsrfToken } from './feature/csrf/manageCsrfToken.js';
 
 export default function App() {
   //App이 최초로 호출되면 CSRF 토큰 발급
-    useEffect(()=>{
-      createCsrfToken();
-
-    }, [])
+   useEffect(()=>{
+    createCsrfToken();
+   }, [])
 
   return (
     <AuthProvider>
