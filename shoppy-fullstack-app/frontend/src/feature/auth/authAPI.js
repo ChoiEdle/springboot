@@ -4,6 +4,7 @@ import { validateFormCheck, validateFormCheck2 } from "../../utils/validate.js";
 import { axiosPost } from "../../utils/dataFetch.js";
 import { getCartCount } from '../../feature/cart/cartAPI.js';
 import { updateCartCount, resetCartCount } from '../../feature/cart/cartSlice.js';
+import { refreshCsrfToken } from '../csrf/manageCsrfToken.js';
 
 export const getIdCheck = (id) => async(dispatch) => {
     const url = "/member/idcheck";
@@ -55,6 +56,7 @@ export const getLogout = () => async(dispatch) => {
     const result = await axiosPost(url, {});
     console.log(result);
     if(result) {
+        refreshCsrfToken();
         dispatch(logout());
         dispatch(resetCartCount());
     }
