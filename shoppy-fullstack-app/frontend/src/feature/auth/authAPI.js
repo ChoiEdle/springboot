@@ -39,6 +39,7 @@ export const getLogin = (formData, param) => async(dispatch) => {
         console.log(result);
         if(result.login) {
             //로그인 성공
+            await refreshCsrfToken();
             dispatch(login({"userId":formData.id}));
             //장바구니 카운트 함수 호출
 //            const count = await getCartCount(formData.id);
@@ -56,7 +57,7 @@ export const getLogout = () => async(dispatch) => {
     const result = await axiosPost(url, {});
     console.log(result);
     if(result) {
-        refreshCsrfToken();
+        await refreshCsrfToken();
         dispatch(logout());
         dispatch(resetCartCount());
     }
