@@ -45,11 +45,13 @@ public class MemberServiceImpl implements MemberService{
     @Override
     public boolean idCheck (String id) {
         boolean result = false;
-        Long count = jpaMemberRepository.findById(id);
+        Long count = jpaMemberRepository.countById(id);
+        System.out.println(count);
         if(count == 1) result = true;
         return result;
     }
 
+    //Spring Security를 이용하여 로그인 처리시 UserDetailsService 객체 사용하므로 login 메소드는 호출 x
     @Override
     public boolean login (MemberDto member) {
         if(idCheck(member.getId())){
