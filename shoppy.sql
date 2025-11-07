@@ -241,6 +241,8 @@ select sum(c.qty * p.price) as total_price from cart c inner join product p on c
 /*********************************************************************
 	view_cartlist 생성
 **********************************************************************/
+drop view view_cartlist;
+select * from information_schema.views where table_name = 'view_cartlist';
 create view view_cartlist
 as
 select  m.id,
@@ -255,9 +257,9 @@ select  m.id,
 	   c.size,
 	   c.qty,
 	   c.cid,
-       t.totalPrice
+       t.total_price
    from member m, product p, cart c,
-          (select c.id, sum(c.qty * p.price) as totalPrice
+          (select c.id, sum(c.qty * p.price) as total_price
 			from cart c
 			inner join product p on c.pid = p.pid
 			group by c.id) as t
@@ -349,4 +351,27 @@ from view_cartList where cid in (17,18,19);
 set sql_safe_updates = 0;
 delete from orders;
             
-            
+select * from member;
+select * from cart;
+desc member;
+select * from view_cartlist;
+desc view_cartList;            
+
+-- findById('test')
+-- select id from member where ;
+
+-- mysql에서는 view 수정 불가!!, 컬럼 수정 시 재 생성
+select * from information_schema.views where table_name = 'view_cartlist';
+
+
+
+
+
+
+
+
+
+
+
+
+
