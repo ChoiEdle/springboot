@@ -1,6 +1,7 @@
 package com.springboot.shoppy_fullstack_app.jpa_repository;
 
 import com.springboot.shoppy_fullstack_app.dto.CartCheckQtyDto;
+import com.springboot.shoppy_fullstack_app.dto.CartItemDto;
 import com.springboot.shoppy_fullstack_app.dto.CartListResponseDto;
 import com.springboot.shoppy_fullstack_app.entity.CartItem;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,6 +14,19 @@ import java.util.List;
 
 @Repository
 public interface JpaCartRepository extends JpaRepository<CartItem, Integer> {
+    //장바구니 아이템 삭제
+    @Modifying
+    @Query("""
+            delete from CartItem c where c.cid = :cid
+            """)
+    int deleteItem(@Param("cid") int cid);
+
+    //장바구니 아이템 카운트 - Native Query 방식
+    @Query(value = """
+            select ifnull(sum(qty), 0) as sumQty from cart where id = :id
+            """, nativeQuery = true)
+    int countById(@Param("id") String id);
+
     //장바구니 전체 리스트 조회
     @Query("""
             select new com.springboot.shoppy_fullstack_app.dto.CartListResponseDto(

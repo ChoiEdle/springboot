@@ -59,8 +59,10 @@ public class CartServiceImpl implements CartService{
     }
 
     @Override
-    public CartItemDto getCount(CartItemDto cartItem) {
-        return cartRepository.getCount(cartItem);
+    public CartItemDto getCount(CartItemDto cartItemDto) {
+        int count = jpaCartRepository.countById(cartItemDto.getId());
+        cartItemDto.setSumQty(count);
+        return cartItemDto;
     }
 
     @Override
@@ -70,7 +72,7 @@ public class CartServiceImpl implements CartService{
     }
 
     @Override
-    public int deleteItem(CartItemDto cartItem) {
-        return cartRepository.deleteItem(cartItem);
+    public int deleteItem(CartItemDto cartItemDto) {
+        return jpaCartRepository.deleteItem(cartItemDto.getCid());
     }
 }
