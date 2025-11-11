@@ -2,32 +2,54 @@ import React, { useEffect, useState } from 'react';
 import { SearchForm } from '../components/commons/SearchForm.jsx';
 import { MenuList } from '../components/commons/MenuList.jsx';
 import { axiosData } from '../utils/dataFetch.js';
+import { getList, getSearchList } from '../feature/support/supportAPI.js';
+// 페이징 처리 추가
+import Pagination from 'rc-pagination';
+import 'bootstrap/dist/css/bootstrap.css';
+import 'rc-pagination/assets/index.css'
 
 export function Support() {
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalCount, setTotalCount] = useState(0);
+    const [pageSize, setPageSize] = useState(3);
+
+
     const [menus, setMenus] = useState([]);
     const [category, setCategory] = useState([]);
     const [list, setList] = useState([]);
+    const [stype, setStype] = useState('all');
+
     useEffect(()=>{
         const load = async() => {
+            const data = {
+                "stype" : stype,
+                "currentPage" : currentPage,
+                "pageSize" : pageSize
+            }
             const jsonData = await axiosData("/data/support.json");
+            const pageList = await getList(data);
             setMenus(jsonData.menus);
             setCategory(jsonData.category);
-            setList(jsonData.list);
+            setList(pageList.list);
+            setTotalCount(pageList.totalCount);
         }
         load();
-    },[]);
+    }, [stype, currentPage]);
 
-    const filterList = (type) => {
-        const filter = async() => {
-            const jsonData = await axiosData("/data/support.json");
-            const filterData = jsonData.list.filter((item)=>item.type===type);
-            type === "all" ? setList(jsonData.list) : setList(filterData);
+    const filterList = async(stype) => {
+        setStype(stype);
+        setCurrentPage(1);
+    }
+
+    const handleSearch = async(searchData) => {
+        const data = {
+            "type" : searchData.type,
+            "keyword": searchData.keyword,
+            "currentPage" : currentPage,
+            "pageSize" : pageSize
         }
-        filter();
-        //아래는 내가 한 것 : 위의 filterList함수에 async를 붙였었음
-        // const jsonData = await axiosData("/data/support.json");
-        // const data = jsonData.list.filter((item)=>item.type===type);
-        // type === "all" ? setList(jsonData.list) : setList(data);
+        const list = await getSearchList(data);
+        setList(list);
     }
 
     return (
@@ -36,25 +58,9 @@ export function Support() {
                 <h1 className="center-title">공지/뉴스</h1>
                 <div className="support-content">
                     <p style={{color:"#777"}}>CGV의 주요한 이슈 및 여러가지 소식들을 확인할 수 있습니다.</p>
-                    {<SearchForm category={category} />}
-                    {/* <div>
-                        <select name="search_cartegory">
-                            <option value="title">제목</option>
-                            <option value="content">내용</option>
-                        </select>
-                        <input type="text" name="search_content" />
-                        <button>검색하기</button>
-                    </div> */}
+                    {<SearchForm category={category} search={handleSearch} />}
                     <nav>
                         <MenuList menus={menus} filterList={filterList} />
-                        {/* <ul className="filter-menu">
-                            <li><a href="#" id="all">전체</a></li>
-                            <li><a href="#" id="system">시스템점검</a></li>
-                            <li><a href="#" id="theater">극장</a></li>
-                            <li><a href="#" id="event">행사/이벤트</a></li>
-                            <li><a href="#" id="partner">제휴이벤트</a></li>
-                            <li><a href="#" id="etc">기타</a></li>
-                        </ul> */}
                     </nav>
                     <p id="before-table">총 114건이 검색되었습니다. </p>
                     
@@ -72,8 +78,8 @@ export function Support() {
                         <tbody>
                             {list && list.map((item, idx) => 
                                 <tr>
-                                    <td>{idx+1}</td>
-                                    <td>[{item.type}]</td>
+                                    <td>{item.rowNumber}</td>
+                                    <td>[{item.stype}]</td>
                                     <td>{item.title}</td>
                                     <td>{item.rdate}</td>
                                     <td>{item.hits}</td>
@@ -82,7 +88,15 @@ export function Support() {
                         </tbody>
                         <tfoot>
                             <tr>
-                                <td colSpan={5}>1 2 3 4 5 {">>"} </td>
+                                <td colSpan={5}>
+                                    {/* 페이징 처리 출력 컴포넌트 */}
+                                    <Pagination
+                                    className="d-flex justify-content-center"
+                                    current={currentPage}
+                                    total={totalCount}
+                                    pageSize={pageSize}
+                                    onChange={(page)=>setCurrentPage(page)} />
+                                </td>
                             </tr>
                         </tfoot>
                     </table>
