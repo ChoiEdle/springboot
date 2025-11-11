@@ -18,6 +18,7 @@ export function Support() {
     const [category, setCategory] = useState([]);
     const [list, setList] = useState([]);
     const [stype, setStype] = useState('all');
+    const [filter, setFilter] = useState('stype');
 
     useEffect(()=>{
         const load = async() => {
@@ -48,8 +49,9 @@ export function Support() {
             "currentPage" : currentPage,
             "pageSize" : pageSize
         }
-        const list = await getSearchList(data);
-        setList(list);
+        const pageList = await getSearchList(data);
+        setList(pageList.list);
+        setTotalCount(pageList.totalCount);
     }
 
     return (

@@ -25,8 +25,29 @@ public class SupportServiceImpl implements SupportService{
 
     @Override
     public PageResponseDto<SupportDto> findSearchAll(SupportDto supportDto) {
-        System.out.println(supportDto.getType() + ", " + supportDto.getKeyword());
-        return null;
+        int currentPage = supportDto.getCurrentPage()-1;
+        int pageSize = supportDto.getPageSize();
+        String type = supportDto.getType();
+        String keyword = supportDto.getKeyword();
+        Pageable pageable = PageRequest.of(currentPage, pageSize);
+        Page<Support> list = jpaSupportRepository.search(type, keyword, pageable);
+
+        List<SupportDto> resultList = new ArrayList<>();
+        //entity <=> Dto, rowNumber 추가
+        int offset = pageSize * currentPage;
+        for(int i=0; i<list.getContent().size(); i++) {
+            SupportDto dto = new SupportDto(list.getContent().get(i));
+            dto.setRowNumber(offset + i + 1);   //행번호 추가
+            resultList.add(dto);
+        }
+
+//        list.getContent().forEach(entity -> resultList.add(new SupportDto(entity)));
+        return new PageResponseDto<>(
+                resultList,
+                list.getTotalElements(),
+                list.getTotalPages(),
+                list.getNumber()
+        );
     }
 
     @Override
