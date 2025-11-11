@@ -18,10 +18,11 @@ export function Support() {
     const [category, setCategory] = useState([]);
     const [list, setList] = useState([]);
     const [stype, setStype] = useState('all');
-    const [filter, setFilter] = useState('stype');
+    const [isSearch, setIsSearch] = useState(false);
+    const [searchData, setSearchData] = useState();
 
     useEffect(()=>{
-        const load = async() => {
+        const defaultLoad = async() => {
             const data = {
                 "stype" : stype,
                 "currentPage" : currentPage,
@@ -34,7 +35,11 @@ export function Support() {
             setList(pageList.list);
             setTotalCount(pageList.totalCount);
         }
-        load();
+        if(isSearch) {
+            handleSearch(searchData);
+        } else {
+            defaultLoad();
+        }
     }, [stype, currentPage]);
 
     const filterList = async(stype) => {
@@ -44,6 +49,7 @@ export function Support() {
 
     const handleSearch = async(searchData) => {
         const data = {
+            "stype": stype,
             "type" : searchData.type,
             "keyword": searchData.keyword,
             "currentPage" : currentPage,
@@ -52,6 +58,8 @@ export function Support() {
         const pageList = await getSearchList(data);
         setList(pageList.list);
         setTotalCount(pageList.totalCount);
+        setIsSearch(true);
+        setSearchData(searchData);
     }
 
     return (

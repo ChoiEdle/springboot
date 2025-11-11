@@ -29,8 +29,14 @@ public class SupportServiceImpl implements SupportService{
         int pageSize = supportDto.getPageSize();
         String type = supportDto.getType();
         String keyword = supportDto.getKeyword();
+        String stype = supportDto.getStype();
         Pageable pageable = PageRequest.of(currentPage, pageSize);
-        Page<Support> list = jpaSupportRepository.search(type, keyword, pageable);
+        Page<Support> list;
+        if(stype.equals("all")) {
+            list = jpaSupportRepository.search(type, keyword, pageable);
+        } else {
+            list = jpaSupportRepository.search(type, keyword, stype, pageable);
+        }
 
         List<SupportDto> resultList = new ArrayList<>();
         //entity <=> Dto, rowNumber 추가
