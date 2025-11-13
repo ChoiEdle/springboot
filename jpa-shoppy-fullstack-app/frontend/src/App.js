@@ -14,6 +14,7 @@ import { ProductProvider } from './context/ProductContext.js';
 import { ProtectedPageRoute } from './pages/ProtectedPageRoute.js';
 import { PayResult } from './pages/PayResult.jsx';
 import { ShoppyAdmin } from './pages/ShoppyAdmin.jsx';
+import { ErrorPage } from './pages/ErrorPage.jsx';
 import './styles/cgvSignup.css';
 import './styles/cgv.css';
 import './styles/commons.css';
@@ -44,6 +45,7 @@ export default function App() {
                 <Route path='/payResult' element={<PayResult />} />
                 <Route path='/support' element={<ProtectedPageRoute><Support /></ProtectedPageRoute>} />
                 <Route path='/shoppy/admin' element={<ShoppyAdmin />} />
+                <Route path='/error/:type' element={<ErrorPage />} />
               </Route>
             </Routes>
           </BrowserRouter>
