@@ -386,7 +386,7 @@ select
     jt.rdate
 from
 	json_table(
-		cast(load_file('C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/support_list.json') 
+		cast(load_file('C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/support.json') 
 				AS CHAR CHARACTER SET utf8mb4 ),
 		'$[*]' COLUMNS (
 			 title   	VARCHAR(100)  PATH '$.title',
@@ -397,8 +397,16 @@ from
     ) as jt ;
 
 select * from support;
+select * from support where stype = 'system' and rdate like '%2025%';
+select * from support where title like '%ios%';
 
+set sql_safe_updates = 0;
 
+select * from member;
+
+alter table member add role varchar(10);
+select * from member;
+update member set role = "USER";
 
 
 
