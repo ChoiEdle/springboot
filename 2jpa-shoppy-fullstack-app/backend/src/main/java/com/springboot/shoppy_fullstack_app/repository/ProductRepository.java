@@ -19,10 +19,12 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     ProductReturn findReturn();
 
     //상품 상세 - QnA
-    @Query("select q from ProductQna q where q.pid = :pid")
-    List<ProductQna> findQna(@Param("pid") int pid);
+    @Query("""
+            select distinct p from Product p left join p.qna q where p.pid = :pid
+            """)
+    Optional<Product> findProductWithQna(@Param("pid") int pid);
 
-    //상품 상세 - 디데일 탭
+    //상품 상세 - 디테일 탭
     @Query("""
             select distinct p from Product p left join p.detailinfo di where p.pid = :pid
             """)

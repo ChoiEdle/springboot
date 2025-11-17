@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Entity
 @Table(name="product")
 @Getter @Setter
@@ -19,7 +21,11 @@ public class Product {
     @Column(columnDefinition = "JSON")
     private String imgList;
 
-    //ProductDetailinfof 엔티티 정의 - 필드값
+    //Product(1) : (1..N)ProductDetailinfof 엔티티 정의 - 필드값
     @OneToOne(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private ProductDetailinfo detailinfo;
+
+    //Product(1) : (1..N)ProductQna 엔티티 정의 - 필드값
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ProductQna> qna;
 }
